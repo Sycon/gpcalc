@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GP-CALX</title>
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <style>
+        body{
+            background: rgb(13, 28, 34);
+        }
+        h1{
+            font-family: Trebuchet MS;
+            color: #ffffff;
+            margin-top: 30%;
+            font-weight:bolder;
+            font-size: 50px;
+        }
+        h2{
+            font-family: Trebuchet MS;
+            color: #ffffff;
+            margin-top: 5%;            
+        }
+        p{
+            color: #ffffff;
+            font-size:20px;
+        }
+        #start{
+            background: transparent;
+            border: 2px solid lightcoral;
+        }
+        #instruct{
+            margin-top: 20%;
+        }
+        #cont{
+            background: rgb(10, 21, 26);
+            border: 1px solid seagreen;
+            color: #ffffff;
+        }
+        #pg3{
+            margin-top: 2%;
+        }
+        #calc{
+            background: transparent;
+            border: 2px solid seagreen;
+            margin-left: 15px;
+        }
+        #cont{
+            background: transparent;
+            border: 2px solid cyan;
+            
+        }
+    </style>
+</head>
+<body class="container-fluid">
+    <div id="landPage" class="col-sm-8 col-sm-offset-2">
+        <h1>WELCOME TO GPCalc</h1>
+        <p>the most robust gp calculator there is...</p>
+        <button class="btn btn-primary btn-lg" id="start">GET STARTED >></button>
+    </div>
+
+    <div id="pgTwo" class="col-sm-8 col-sm-offset-2">
+        <p id="instruct">PLEASE FILL OUT THE FOLLOWING FIELDS</p>
+        <form role="form">
+            <div class="form-group">
+                <input class="form-control" type="text" id="name" placeholder="input your name">
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="text" id="dept" placeholder="input your department">
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="text" id="lvl" placeholder="input your level">
+            </div>
+            <div class="form-group">
+                <input class="form-control" min="1" type="number" id="noC" placeholder="number of courses offered">
+            </div>
+            
+                <button class="btn btn-primary btn-lg" id="cont">PROCEED</button>
+            
+        </form>
+    </div>
+
+    <div id="pg3" class="col-sm-12 ">
+
+            <h2>Input Course Details</h2><hr>
+
+            <button class="btn btn-primary btn-lg clx" id="calc">CALCULATE</button>
+        
+    </div>
+
+    <div id="pg4" class="col-sm-12">
+        <h2>RESULT SHEET</h2><hr>
+    </div>
+
+<script src="jquery-3.2.1.min.js"></script>
+<script src="bootstrap.min.js"></script>
+    <script>
+        $(function() {
+            $('#pgTwo').hide(); // hides the form div on page load
+            $('#pg3').hide(); // hides the pg3 div on page load
+            $('#pg4').hide();
+
+            // shows the form div on click of get started and hides the landing page
+            $('#start').click(function(){
+                $('#landPage').fadeOut();
+                $('#pgTwo').fadeIn();
+            });
+
+            // global variables that get the values of the data in the form fields;
+            
+
+
+            // creates the appropriate input fields where the user
+            // will input his course name and credit units on click of proceed button
+            $('#cont').click(function(e) {
+                e.preventDefault();
+                $('#pgTwo').fadeOut();
+                $('#pg3').fadeIn();
+                 userName = $('#name').val(); // gets the user's name
+                 userDept = $('#dept').val(); // gets the user's department
+                 userLvl = $('#lvl').val(); // gets the user's level
+                let userC = $('#noC').val(); // gets the user's number of courses
+                for(let x = 0; x<userC; x++ ){
+                    $('.clx').before("<div class='form-group col-sm-6'>" + 
+                                        "<input type='text' class='form-control' placeholder='input coursename'></div>"+
+                                    "<div class='form-group col-sm-2'>"+
+                                        "<select class='form-control grade'>" +
+                                            "<option>A</option>"+
+                                            "<option>B</option>"+
+                                            "<option>C</option>"+
+                                            "<option>D</option>"+
+                                            "<option>E</option>"+
+                                            "<option>F</option>"+
+                                        "</select>"+
+                                    "</div>"+
+                                    "<div class='form-group col-sm-4'>"+
+                                        "<input type='number' min='0' class='form-control creditUnit' placeholder='input course creditUnit'>"+
+                                    "</div> "  + "<hr>");
+                }
+            });
+
+            // algorithm to calculate the gp
+            $('#calc').click(function() {
+                let gradeArray = []; // array of all the grades gotten by the user
+                let creditUnitArray = []; // array of the credit units of the courses of the user 
+                let gradeByUnit = []; // array of multiplying each user grade by the corresponding credit unit of the course
+                let sumGradeByUnit = 0; // gets the sum of the contents in gradeByUnit Array
+                let sumUnit = 0;  // gets the sum of all the credit units
+                let cgpa = 0; 
+                let grade;
+
+                $('.grade').each(function() {
+                    grade = $(this).find(':selected').val(); //gets the selected user grade
+                    switch (grade) {
+                        case "A": 
+                        grade = 5; break;
+                        case "B": 
+                        grade = 4; break;
+                        case "C": 
+                        grade = 3; break;
+                        case "D": 
+                        grade = 2; break;
+                        case "E": 
+                        grade = 1; break;
+                        case "F": 
+                        grade = 0; break;
+                    };
+                    gradeArray[gradeArray.length] = grade;
+                });
+                $('.creditUnit').each(function() {
+                  creditUnitArray[creditUnitArray.length] =   ($(this).val() != null) ?  $(this).val() : "0" ;
+                    sumUnit += parseFloat(this.value); // gets the sum of all the credit units
+                });
+
+                for (let i = 0; i < creditUnitArray.length; i++) {
+                    gradeByUnit[gradeByUnit.length] = gradeArray[i] * creditUnitArray[i];
+                };
+
+                for (let index = 0; index < gradeByUnit.length; index++) {
+                    sumGradeByUnit += parseFloat(gradeByUnit[index]);
+                };
+
+                cgpa = sumGradeByUnit / sumUnit;
+
+                $('#pg3').fadeOut();
+                $('#pg4').fadeIn();
+
+                $('#pg4').append("<p> Name: "+userName+"</p>"+
+                                 "<p> Department: "+userDept+"</p>"+
+                                 "<p> Level: "+userLvl+"</p>"+
+                                 "<p> GPA: "+cgpa.toFixed(2)+"</p>"
+                );
+                
+
+            });
+
+        });
+
+    </script>
+</body>
+</html>
